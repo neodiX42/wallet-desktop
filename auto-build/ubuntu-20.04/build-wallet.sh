@@ -53,10 +53,12 @@ if [ ! -d 'wallet-desktop' ]; then
   #git clone -b "$WALLET_BRANCH" --recursive "https://github.com/$WALLET_REPO_ACCOUNT/wallet-desktop.git"
   mkdir wallet-desktop
   cd wallet-desktop || exit
+  pwd; ls
   #  git submodule update --remote Wallet/lib_wallet
   cp -R ../../../Wallet .
   cp -R ../../../cmake .
   cp -R ../../../CMakeLists.txt .
+  pwd; ls
   cd .. # wallet-desktop
   grn "wallet-desktop completed"
 else
