@@ -50,9 +50,13 @@ fi
 
 if [ ! -d 'wallet-desktop' ]; then
   yel "Cloning $WALLET_REPO_ACCOUNT/wallet-desktop:$WALLET_BRANCH"
-  git clone -b "$WALLET_BRANCH" --recursive "https://github.com/$WALLET_REPO_ACCOUNT/wallet-desktop.git"
+  #git clone -b "$WALLET_BRANCH" --recursive "https://github.com/$WALLET_REPO_ACCOUNT/wallet-desktop.git"
+  mkdir wallet-desktop
   cd wallet-desktop || exit
-    git submodule update --remote Wallet/lib_wallet
+  #  git submodule update --remote Wallet/lib_wallet
+  cp -R ../../../Wallet .
+  cp -R ../../../cmake .
+  cp -R ../../../CMakeLists.txt .
   cd .. # wallet-desktop
   grn "wallet-desktop completed"
 else
@@ -102,6 +106,7 @@ if [ ! -d 'openssl_1_1_1' ]; then
     git checkout OpenSSL_1_1_1-stable
     ./config --prefix=/usr/local/desktop-app/openssl-1.1.1
     make $MAKE_THREADS_CNT
+    test $? -eq 0 || { red "Can't compile openssl-1.1.1"; exit 1; }
     make install
   cd .. # openssl_1_1_1
   grn "openssl completed"
@@ -116,6 +121,7 @@ if [ ! -d 'libxkbcommon' ]; then
     git checkout xkbcommon-0.8.4
     ./autogen.sh --disable-x11
     make $MAKE_THREADS_CNT
+    test $? -eq 0 || { red "Can't compile libxkbcommon"; exit 1; }
     make install
   cd .. # libxkbcommon
   grn "libxkbcommon completed"
@@ -131,6 +137,7 @@ if [ ! -d 'googletest' ]; then
     cd build || exit
       cmake ..
       make
+      test $? -eq 0 || { red "Can't compile googletest"; exit 1; }
       cp lib/*.a /usr/lib
     cd .. # build
   cd .. # googletest
@@ -143,8 +150,8 @@ if [ ! -d 'qt_5_12_8' ]; then
   yel "Cloning and building qt 5.12.8"
   git clone git://code.qt.io/qt/qt5.git qt_5_12_8
   cd qt_5_12_8 || exit
-    perl init-repository --module-subset=qtbase,qtwayland,qtimageformats,qtsvg
     git checkout v5.12.8
+    perl init-repository --module-subset=qtbase,qtwayland,qtimageformats,qtsvg
     git submodule update qtbase
     git submodule update qtwayland
     git submodule update qtimageformats
@@ -168,6 +175,7 @@ if [ ! -d 'qt_5_12_8' ]; then
       -nomake examples -nomake tests
 
     make $MAKE_THREADS_CNT
+    test $? -eq 0 || { red "Can't compile QT"; exit 1; }
     make install
   cd .. # qt_5_12_8
   grn "qt completed"
@@ -207,6 +215,7 @@ if [ ! -d 'breakpad' ]; then
     sed -i 's/static int tgkill/int tgkill/g' src/client/linux/handler/exception_handler.cc
 
     make $MAKE_THREADS_CNT
+    test $? -eq 0 || { red "Can't compile breakpad"; exit 1; }
     make install
     cd src/tools || exit
       ../../../gyp/gyp  --depth=. --generator-output=.. -Goutput_dir=../out tools.gyp --format=cmake
@@ -214,6 +223,7 @@ if [ ! -d 'breakpad' ]; then
     cd out/Default || exit
       cmake .
       make $MAKE_THREADS_CNT dump_syms
+      test $? -eq 0 || { red "Can't compile dump_syms"; exit 1; }
     cd ../.. # out/Default
   cd .. # breakpad
   grn "breakpad completed"
@@ -225,8 +235,8 @@ if [ ! -d 'ton' ]; then
   yel "Cloning and building $TONLIB_REPO_ACCOUNT/ton:$TONLIB_BRANCH"
   git clone --single-branch --branch "$TONLIB_BRANCH" "https://github.com/$TONLIB_REPO_ACCOUNT/ton.git"
   cd ton || exit
-    git submodule init
-    git submodule update third-party/crc32c
+  git submodule init
+  git submodule update third-party/crc32c
     mkdir build-debug
     mkdir build
     cd build-debug || exit
@@ -234,12 +244,14 @@ if [ ! -d 'ton' ]; then
         -DOPENSSL_FOUND=1 -DOPENSSL_INCLUDE_DIR=/usr/local/desktop-app/openssl-1.1.1/include \
         -DOPENSSL_CRYPTO_LIBRARY=/usr/local/desktop-app/openssl-1.1.1/lib/libcrypto.a \
         -DTON_ARCH="$(uname -m | sed --expression='s/_/-/g')" ..
+      test $? -eq 0 || { red "Can't configure debug tonlib"; exit 1; }
     cd .. # build-debug
     cd build || exit
       cmake -DTON_USE_ROCKSDB=OFF -DTON_USE_ABSEIL=OFF -DTON_ONLY_TONLIB=ON \
         -DOPENSSL_FOUND=1 -DOPENSSL_INCLUDE_DIR=/usr/local/desktop-app/openssl-1.1.1/include \
         -DOPENSSL_CRYPTO_LIBRARY=/usr/local/desktop-app/openssl-1.1.1/lib/libcrypto.a \
         -DTON_ARCH="$(uname -m | sed --expression='s/_/-/g')" -DCMAKE_BUILD_TYPE=Release ..
+      test $? -eq 0 || { red "Can't configure release tonlib"; exit 1; }
     cd .. # build
   cd .. # ton
   grn "ton (tonlib) completed"
@@ -250,6 +262,7 @@ fi
 cd ton/build || exit
   yel "Building tonlib"
   make $MAKE_THREADS_CNT tonlib
+  test $? -eq 0 || { red "Can't build tonlib"; exit 1; }
   grn "tonlib build completed"
 cd ../.. # ton/build
 
@@ -274,12 +287,14 @@ cd wallet-desktop || exit
   cd Wallet || exit
     yel "Configuring Wallet"
     ./configure.sh -D DESKTOP_APP_USE_PACKAGED=OFF
-    grn "Confugration done"
+    test $? -eq 0 || { red "Can't configure Wallet"; exit 1; }
+    grn "Configuration done"
   cd ..
 
   cd out/Release || exit
     yel "Building Wallet (Release)"
     make $MAKE_THREADS_CNT
+    test $? -eq 0 || { red "Can't build Wallet"; exit 1; }
     grn "Build done"
   cd ../.. # out/Release
 
@@ -288,4 +303,5 @@ cd .. # wallet-desktop
 blu "Stripping symbols"
 cp wallet-desktop/out/Release/bin/Wallet ./
 strip ./Wallet
+test $? -eq 0 || { red "Can't strip Wallet"; exit 1; }
 grn "All done!"
