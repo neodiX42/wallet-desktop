@@ -114,6 +114,20 @@ echo Using secp256k1...
 )
 
 
+if not exist "libsodium" (
+curl  -Lo libsodium-1.0.18-stable-msvc.zip https://download.libsodium.org/libsodium/releases/libsodium-1.0.18-stable-msvc.zip
+IF %errorlevel% NEQ 0 (
+  echo Can't download libsodium
+  exit /b %errorlevel%
+)
+unzip libsodium-1.0.18-stable-msvc.zip
+) else (
+echo Using libsodium...
+)
+
+SET SODIUM_DIR=%LibrariesPath%\libsodium
+
+
 git clone https://github.com/desktop-app/lzma.git
 cd lzma\C\Util\LzmaLib
 msbuild LzmaLib.sln /property:Configuration=Debug /p:PlatformToolset=v142 /p:platform=x86 /p:WindowsTargetPlatformVersion=10.0.19041.0
@@ -163,6 +177,7 @@ cd build-debug
 cmake -A Win32 -DTON_USE_ROCKSDB=OFF -DTON_USE_ABSEIL=OFF -DTON_ARCH= -DTON_ONLY_TONLIB=ON ^
 -DOPENSSL_FOUND=1 -DOPENSSL_INCLUDE_DIR=%LibrariesPath%\openssl_1_1_1\include ^
 -DOPENSSL_CRYPTO_LIBRARY=%LibrariesPath%\openssl_1_1_1\out32.dbg\libcrypto.lib ^
+-DSODIUM_USE_STATIC_LIBS=1 ^
 -DSECP256K1_FOUND=1 ^
 -DSECP256K1_INCLUDE_DIR=%LibrariesPath%\secp256k1\include ^
 -DSECP256K1_LIBRARY=%LibrariesPath%\secp256k1\build\src\Debug\libsecp256k1.lib ^
@@ -180,6 +195,7 @@ cd build
 cmake -A Win32 -DTON_USE_ROCKSDB=OFF -DTON_USE_ABSEIL=OFF -DTON_ARCH= -DTON_ONLY_TONLIB=ON ^
 -DOPENSSL_FOUND=1 -DOPENSSL_INCLUDE_DIR=%LibrariesPath%\openssl_1_1_1\include ^
 -DOPENSSL_CRYPTO_LIBRARY=%LibrariesPath%\openssl_1_1_1\out32\libcrypto.lib ^
+-DSODIUM_USE_STATIC_LIBS=1 ^
 -DSECP256K1_FOUND=1 ^
 -DSECP256K1_INCLUDE_DIR=%LibrariesPath%\secp256k1\include ^
 -DSECP256K1_LIBRARY=%LibrariesPath%\secp256k1\build\src\Release\libsecp256k1.lib ^
