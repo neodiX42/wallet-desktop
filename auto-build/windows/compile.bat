@@ -113,6 +113,22 @@ cd ..
 echo Using secp256k1...
 )
 
+if not exist "lz4" (
+git clone https://github.com/lz4/lz4.git
+cd lz4
+git checkout v1.9.4
+cd build\VS2017\liblz4
+msbuild liblz4.vcxproj /p:Configuration=Release /p:platform=x64 -p:PlatformToolset=v143
+dir /s
+IF %errorlevel% NEQ 0 (
+  echo Can't install lz4
+  exit /b %errorlevel%
+)
+cd ..\..\..\..
+) else (
+echo Using lz4...
+)
+
 
 if not exist "libsodium" (
 curl  -Lo libsodium-1.0.18-stable-msvc.zip https://download.libsodium.org/libsodium/releases/libsodium-1.0.18-stable-msvc.zip
@@ -170,7 +186,7 @@ call jom -j4 install
 cd ..
 
 REM git clone --single-branch --branch wallets --recursive https://github.com/newton-blockchain/ton.git
-git clone --recursive https://github.com/ton-blockchain/ton.git
+git clone --recursive --branch testnet https://github.com/ton-blockchain/ton.git
 cd ton
 mkdir build-debug
 cd build-debug
@@ -178,6 +194,9 @@ cmake -A Win32 -DTON_USE_ROCKSDB=OFF -DTON_USE_ABSEIL=OFF -DTON_ARCH= -DTON_ONLY
 -DOPENSSL_FOUND=1 -DOPENSSL_INCLUDE_DIR=%LibrariesPath%\openssl_1_1_1\include ^
 -DOPENSSL_CRYPTO_LIBRARY=%LibrariesPath%\openssl_1_1_1\out32.dbg\libcrypto.lib ^
 -DSODIUM_USE_STATIC_LIBS=1 ^
+-DLZ4_FOUND=1 ^
+-DLZ4_INCLUDE_DIRS=%LibrariesPath%\lz4\lib ^
+-DLZ4_LIBRARIES=%LibrariesPath%\lz4\build\VS2017\liblz4\bin\x64_Debug\liblz4_static.lib ^
 -DSECP256K1_FOUND=1 ^
 -DSECP256K1_INCLUDE_DIR=%LibrariesPath%\secp256k1\include ^
 -DSECP256K1_LIBRARY=%LibrariesPath%\secp256k1\build\src\Debug\libsecp256k1.lib ^
@@ -196,6 +215,9 @@ cmake -A Win32 -DTON_USE_ROCKSDB=OFF -DTON_USE_ABSEIL=OFF -DTON_ARCH= -DTON_ONLY
 -DOPENSSL_FOUND=1 -DOPENSSL_INCLUDE_DIR=%LibrariesPath%\openssl_1_1_1\include ^
 -DOPENSSL_CRYPTO_LIBRARY=%LibrariesPath%\openssl_1_1_1\out32\libcrypto.lib ^
 -DSODIUM_USE_STATIC_LIBS=1 ^
+-DLZ4_FOUND=1 ^
+-DLZ4_INCLUDE_DIRS=%LibrariesPath%\lz4\lib ^
+-DLZ4_LIBRARIES=%LibrariesPath%\lz4\build\VS2017\liblz4\bin\x64_Release\liblz4_static.lib ^
 -DSECP256K1_FOUND=1 ^
 -DSECP256K1_INCLUDE_DIR=%LibrariesPath%\secp256k1\include ^
 -DSECP256K1_LIBRARY=%LibrariesPath%\secp256k1\build\src\Release\libsecp256k1.lib ^

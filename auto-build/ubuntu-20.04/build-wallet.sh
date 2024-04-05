@@ -5,8 +5,8 @@ MAKE_THREADS_CNT=-j16
 WALLET_REPO_ACCOUNT="ton-blockchain"
 WALLET_BRANCH="master"
 
-TONLIB_REPO_ACCOUNT="newton-blockchain"
-TONLIB_BRANCH="wallets"
+TONLIB_REPO_ACCOUNT="ton-blockchain"
+TONLIB_BRANCH="testnet"
 
 PATCH_REPO_ACCOUNT="desktop-app"
 PATCH_COMMIT="10aeaf6"
@@ -17,7 +17,7 @@ function grn() { echo -e -n "\033[1;32m$1\033[0m\n"; }
 function blu() { echo -e -n "\033[1;34m$1\033[0m\n"; }
 
 if [ ! -f "system-deps-installed" ]; then
-  yel "Installing neccessary system dependencies"
+  yel "Installing necessary system dependencies"
   apt update && apt install git && \
   apt install python2.7 python2.7-minimal libpython2.7-minimal libpython2.7-stdlib -y && \
   update-alternatives --install /usr/bin/python python /usr/bin/python2.7 10 && \
@@ -31,7 +31,7 @@ if [ ! -f "system-deps-installed" ]; then
     libxcb-render-util0-dev libxcb-util0-dev libxcb-xkb-dev libxrender-dev \
     libasound-dev libpulse-dev libxcb-sync0-dev libxcb-randr0-dev libegl1-mesa-dev \
     libx11-xcb-dev libffi-dev libncurses5-dev pkg-config texi2html bison yasm \
-    zlib1g-dev xutils-dev chrpath gperf -y && \
+    zlib1g-dev xutils-dev chrpath gperf libsodium-dev liblz4-dev libsecp256k1-dev -y && \
   add-apt-repository ppa:ubuntu-toolchain-r/test -y && \
   apt-get update && \
   apt-get install gcc-8 g++-8 -y && \
@@ -51,11 +51,9 @@ fi
 if [ ! -d 'wallet-desktop' ]; then
   mkdir wallet-desktop
   cd wallet-desktop || exit
-  pwd; ls -lartR
   cp -R ../../../Wallet .
   cp -R ../../../cmake .
   cp -R ../../../CMakeLists.txt .
-  pwd; ls -lartR
   cd .. # wallet-desktop
   grn "wallet-desktop completed"
 else
@@ -266,11 +264,10 @@ cd ton/build || exit
 cd ../.. # ton/build
 
 cd .. # Libraries
-pwd; ls -lartR
+
 if [ ! -f "wallet-cmake-patched" ]; then
   yel "patching qt CMakeLists"
   cd wallet-desktop || exit
-  pwd; ls -lartR
     # temporary even more dirty workaround
     sed -i '238d' cmake/external/qt/CMakeLists.txt
     sed -i '238d' cmake/external/qt/CMakeLists.txt
