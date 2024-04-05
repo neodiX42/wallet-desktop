@@ -49,12 +49,9 @@ if [ ! -f "system-deps-installed" ]; then
 fi
 
 if [ ! -d 'wallet-desktop' ]; then
-  yel "Cloning $WALLET_REPO_ACCOUNT/wallet-desktop:$WALLET_BRANCH"
-  #git clone -b "$WALLET_BRANCH" --recursive "https://github.com/$WALLET_REPO_ACCOUNT/wallet-desktop.git"
   mkdir wallet-desktop
   cd wallet-desktop || exit
   pwd; ls
-  #  git submodule update --remote Wallet/lib_wallet
   cp -R ../../../Wallet .
   cp -R ../../../cmake .
   cp -R ../../../CMakeLists.txt .
@@ -72,7 +69,7 @@ if [ ! -d 'cmake' ]; then
   yel "Cloning and building cmake"
   git clone https://github.com/Kitware/CMake cmake
   cd cmake || exit
-    git checkout v3.16.0
+    git checkout v3.21.0
     ./bootstrap
     make $MAKE_THREADS_CNT
     make install
@@ -269,10 +266,11 @@ cd ton/build || exit
 cd ../.. # ton/build
 
 cd .. # Libraries
-
+pwd; ls
 if [ ! -f "wallet-cmake-patched" ]; then
   yel "patching qt CMakeLists"
   cd wallet-desktop || exit
+  pwd; ls
     # temporary even more dirty workaround
     sed -i '238d' cmake/external/qt/CMakeLists.txt
     sed -i '238d' cmake/external/qt/CMakeLists.txt

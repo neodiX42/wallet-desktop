@@ -89,6 +89,31 @@ msbuild zlibstat.vcxproj /property:Configuration=ReleaseWithoutAsm /p:PlatformTo
 cd ..\..\..\..
 
 
+if not exist "secp256k1" (
+git clone https://github.com/bitcoin-core/secp256k1.git
+cd secp256k1
+git checkout v0.3.2
+cmake -G "Visual Studio 17 2022" -A x64 -S . -B build -DSECP256K1_ENABLE_MODULE_RECOVERY=ON -DBUILD_SHARED_LIBS=OFF
+IF %errorlevel% NEQ 0 (
+  echo Can't configure secp256k1
+  exit /b %errorlevel%
+)
+cmake --build build --config Debug
+IF %errorlevel% NEQ 0 (
+  echo Can't install debug secp256k1
+  exit /b %errorlevel%
+)
+cmake --build build --config Release
+IF %errorlevel% NEQ 0 (
+  echo Can't install release secp256k1
+  exit /b %errorlevel%
+)
+cd ..
+) else (
+echo Using secp256k1...
+)
+
+
 git clone https://github.com/desktop-app/lzma.git
 cd lzma\C\Util\LzmaLib
 msbuild LzmaLib.sln /property:Configuration=Debug /p:PlatformToolset=v142 /p:platform=x86 /p:WindowsTargetPlatformVersion=10.0.19041.0
@@ -135,13 +160,35 @@ git clone --recursive https://github.com/ton-blockchain/ton.git
 cd ton
 mkdir build-debug
 cd build-debug
-cmake -A Win32 -DTON_USE_ROCKSDB=OFF -DTON_USE_ABSEIL=OFF -DTON_ARCH= -DTON_ONLY_TONLIB=ON -DOPENSSL_FOUND=1 -DOPENSSL_INCLUDE_DIR=%LibrariesPath%\openssl_1_1_1\include -DOPENSSL_CRYPTO_LIBRARY=%LibrariesPath%\openssl_1_1_1\out32.dbg\libcrypto.lib -DZLIB_FOUND=1 -DZLIB_INCLUDE_DIR=%LibrariesPath%\zlib -DZLIB_LIBRARY=%LibrariesPath%\zlib\contrib\vstudio\vc14\x86\ZlibStatDebug\zlibstat.lib -DCMAKE_CXX_FLAGS_DEBUG="/DZLIB_WINAPI /DNDEBUG /MTd /Zi /Od /Ob0" -DCMAKE_C_FLAGS_DEBUG="/DNDEBUG /MTd /Zi /Od /Ob0" -DCMAKE_EXE_LINKER_FLAGS="/SAFESEH:NO Ws2_32.lib Gdi32.lib Advapi32.lib Crypt32.lib User32.lib" ..
+cmake -A Win32 -DTON_USE_ROCKSDB=OFF -DTON_USE_ABSEIL=OFF -DTON_ARCH= -DTON_ONLY_TONLIB=ON ^
+-DOPENSSL_FOUND=1 -DOPENSSL_INCLUDE_DIR=%LibrariesPath%\openssl_1_1_1\include ^
+-DOPENSSL_CRYPTO_LIBRARY=%LibrariesPath%\openssl_1_1_1\out32.dbg\libcrypto.lib ^
+-DSECP256K1_FOUND=1 ^
+-DSECP256K1_INCLUDE_DIR=%LibrariesPath%\secp256k1\include ^
+-DSECP256K1_LIBRARY=%LibrariesPath%\secp256k1\build\src\Debug\libsecp256k1.lib ^
+-DZLIB_FOUND=1 -DZLIB_INCLUDE_DIR=%LibrariesPath%\zlib ^
+-DZLIB_LIBRARY=%LibrariesPath%\zlib\contrib\vstudio\vc14\x86\ZlibStatDebug\zlibstat.lib ^
+-DCMAKE_CXX_FLAGS_DEBUG="/DZLIB_WINAPI /DNDEBUG /MTd /Zi /Od /Ob0" ^
+-DCMAKE_C_FLAGS_DEBUG="/DNDEBUG /MTd /Zi /Od /Ob0" ^
+-DCMAKE_EXE_LINKER_FLAGS="/SAFESEH:NO Ws2_32.lib Gdi32.lib Advapi32.lib Crypt32.lib User32.lib" ..
+
 cmake --build . --target tonlib --config Debug
 
 cd ..
 mkdir build
 cd build
-cmake -A Win32 -DTON_USE_ROCKSDB=OFF -DTON_USE_ABSEIL=OFF -DTON_ARCH= -DTON_ONLY_TONLIB=ON -DOPENSSL_FOUND=1 -DOPENSSL_INCLUDE_DIR=%LibrariesPath%\openssl_1_1_1\include -DOPENSSL_CRYPTO_LIBRARY=%LibrariesPath%\openssl_1_1_1\out32\libcrypto.lib -DZLIB_FOUND=1 -DZLIB_INCLUDE_DIR=%LibrariesPath%\zlib -DZLIB_LIBRARY=%LibrariesPath%\zlib\contrib\vstudio\vc14\x86\ZlibStatReleaseWithoutAsm\zlibstat.lib -DCMAKE_CXX_FLAGS_RELEASE="/DZLIB_WINAPI /MT /Ob2" -DCMAKE_C_FLAGS_RELEASE="/MT /Ob2" -DCMAKE_EXE_LINKER_FLAGS="/SAFESEH:NO Ws2_32.lib Gdi32.lib Advapi32.lib Crypt32.lib User32.lib" ..
+cmake -A Win32 -DTON_USE_ROCKSDB=OFF -DTON_USE_ABSEIL=OFF -DTON_ARCH= -DTON_ONLY_TONLIB=ON ^
+-DOPENSSL_FOUND=1 -DOPENSSL_INCLUDE_DIR=%LibrariesPath%\openssl_1_1_1\include ^
+-DOPENSSL_CRYPTO_LIBRARY=%LibrariesPath%\openssl_1_1_1\out32\libcrypto.lib ^
+-DSECP256K1_FOUND=1 ^
+-DSECP256K1_INCLUDE_DIR=%LibrariesPath%\secp256k1\include ^
+-DSECP256K1_LIBRARY=%LibrariesPath%\secp256k1\build\src\Release\libsecp256k1.lib ^
+-DZLIB_FOUND=1 -DZLIB_INCLUDE_DIR=%LibrariesPath%\zlib ^
+-DZLIB_LIBRARY=%LibrariesPath%\zlib\contrib\vstudio\vc14\x86\ZlibStatReleaseWithoutAsm\zlibstat.lib ^
+-DCMAKE_CXX_FLAGS_RELEASE="/DZLIB_WINAPI /MT /Ob2" ^
+-DCMAKE_C_FLAGS_RELEASE="/MT /Ob2" ^
+-DCMAKE_EXE_LINKER_FLAGS="/SAFESEH:NO Ws2_32.lib Gdi32.lib Advapi32.lib Crypt32.lib User32.lib" ..
+
 cmake --build . --target tonlib --config Release
 
 cd %LibrariesPath%\..
