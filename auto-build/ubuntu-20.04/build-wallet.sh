@@ -51,11 +51,11 @@ fi
 if [ ! -d 'wallet-desktop' ]; then
   mkdir wallet-desktop
   cd wallet-desktop || exit
-  pwd; ls
+  pwd; ls -lartR
   cp -R ../../../Wallet .
   cp -R ../../../cmake .
   cp -R ../../../CMakeLists.txt .
-  pwd; ls
+  pwd; ls -lartR
   cd .. # wallet-desktop
   grn "wallet-desktop completed"
 else
@@ -266,11 +266,11 @@ cd ton/build || exit
 cd ../.. # ton/build
 
 cd .. # Libraries
-pwd; ls
+pwd; ls -lartR
 if [ ! -f "wallet-cmake-patched" ]; then
   yel "patching qt CMakeLists"
   cd wallet-desktop || exit
-  pwd; ls
+  pwd; ls -lartR
     # temporary even more dirty workaround
     sed -i '238d' cmake/external/qt/CMakeLists.txt
     sed -i '238d' cmake/external/qt/CMakeLists.txt
