@@ -186,8 +186,9 @@ call jom -j4 install
 cd ..
 
 REM git clone --single-branch --branch wallets --recursive https://github.com/newton-blockchain/ton.git
-git clone --recursive --branch testnet https://github.com/ton-blockchain/ton.git
+git clone --recursive https://github.com/ton-blockchain/ton.git
 cd ton
+git checkout $TONLIB_BRANCH
 mkdir build-debug
 cd build-debug
 cmake -A Win32 -DTON_USE_ROCKSDB=OFF -DTON_USE_ABSEIL=OFF -DTON_ARCH= -DTON_ONLY_TONLIB=ON ^

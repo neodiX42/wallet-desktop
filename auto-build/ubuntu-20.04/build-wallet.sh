@@ -230,10 +230,9 @@ fi
 
 if [ ! -d 'ton' ]; then
   yel "Cloning and building $TONLIB_REPO_ACCOUNT/ton:$TONLIB_BRANCH"
-  git clone --single-branch --branch "$TONLIB_BRANCH" "https://github.com/$TONLIB_REPO_ACCOUNT/ton.git"
+  git clone --recursive "https://github.com/$TONLIB_REPO_ACCOUNT/ton.git"
   cd ton || exit
-  git submodule init
-  git submodule update third-party/crc32c
+  git checkout $TONLIB_BRANCH
     mkdir build-debug
     mkdir build
     cd build-debug || exit
