@@ -5,8 +5,8 @@ MAKE_THREADS_CNT=-j16
 WALLET_REPO_ACCOUNT="ton-blockchain"
 WALLET_BRANCH="master"
 
-TONLIB_REPO_ACCOUNT="ton-blockchain"
-TONLIB_BRANCH="testnet"
+TONLIB_REPO_ACCOUNT="newton-blockchain"
+TONLIB_BRANCH="wallets"
 
 PATCH_REPO_ACCOUNT="desktop-app"
 PATCH_COMMIT="10aeaf6"

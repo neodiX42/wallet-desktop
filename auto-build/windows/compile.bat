@@ -118,7 +118,7 @@ git clone https://github.com/lz4/lz4.git
 cd lz4
 git checkout v1.9.4
 cd build\VS2017\liblz4
-msbuild liblz4.vcxproj /p:Configuration=Release /p:platform=x64 -p:PlatformToolset=v143
+msbuild liblz4.vcxproj /p:Configuration=Release /p:platform=x64 -p:PlatformToolset=v142
 dir /s
 IF %errorlevel% NEQ 0 (
   echo Can't install lz4
