@@ -98,7 +98,7 @@ echo %PATH%
 cd Libraries
 SET LibrariesPath=%cd%
 
-SET GYP_MSVS_OVERRIDE_PATH=C:\Program Files (x86)\Microsoft Visual Studio\2019\Community
+SET GYP_MSVS_OVERRIDE_PATH=C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise
 SET GYP_MSVS_VERSION=2019
 
 if not exist "openssl_1_1_1" (
