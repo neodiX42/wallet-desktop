@@ -126,7 +126,6 @@ if not exist "openssl_1_1_1" (
     echo Using openssl_1_1_1...
 )
 
-pause
 
 if not exist "patches" (
     git clone https://github.com/desktop-app/patches.git
@@ -166,7 +165,6 @@ if not exist "secp256k1" (
 ) else (
     echo Using secp256k1...
 )
-
 
 
 if not exist "lz4" (
@@ -248,8 +246,8 @@ if not exist "qt_5_12_8" (
 )
 
 if not exist "ton" (
-    REM git clone --single-branch --branch wallets --recursive https://github.com/newton-blockchain/ton.git
     git clone --recursive https://github.com/newton-blockchain/ton.git
+    REM git clone --recursive https://github.com/ton-blockchain/ton.git
     cd ton
     git checkout wallets
     mkdir build-debug
