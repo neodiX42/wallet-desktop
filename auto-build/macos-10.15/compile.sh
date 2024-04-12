@@ -66,7 +66,7 @@ cd ..
 git clone https://github.com/openssl/openssl openssl_1_1_1
 cd openssl_1_1_1
 git checkout OpenSSL_1_1_1-stable
-./Configure --prefix=/usr/local/macos darwin64-x86_64-cc -static -mmacosx-version-min=10.12
+./Configure --prefix=/usr/local/macos darwin64-x86_64-cc -static -mmacosx-version-min=11.7
 make build_libs $MAKE_THREADS_CNT
 cd ..
 
@@ -88,15 +88,15 @@ cd ../../..
 
 git apply $rootPath/wallet-desktop/auto-build/macos-10.15/crashpad.patch
 
-build/gyp_crashpad.py -Dmac_deployment_target=10.10
+build/gyp_crashpad.py -Dmac_deployment_target=11.7
 ninja -C out/Debug
 ninja -C out/Release
 cd ..
 
 git clone git://code.qt.io/qt/qt5.git qt5_12_8
 cd qt5_12_8
-perl init-repository --module-subset=qtbase,qtimageformats
 git checkout v5.12.8
+perl init-repository --module-subset=qtbase,qtimageformats
 git submodule update qtbase
 git submodule update qtimageformats
 cd qtbase
@@ -128,12 +128,12 @@ git submodule init
 git submodule update third-party/crc32c
 mkdir build-debug
 cd build-debug
-cmake -DTON_USE_ROCKSDB=OFF -DTON_USE_ABSEIL=OFF -DTON_ARCH= -DTON_ONLY_TONLIB=ON -DOPENSSL_FOUND=1 -DOPENSSL_INCLUDE_DIR=$LibrariesPath/openssl_1_1_1/include -DOPENSSL_CRYPTO_LIBRARY=$LibrariesPath/openssl_1_1_1/libcrypto.a -DZLIB_FOUND=1 -DZLIB_INCLUDE_DIR=$LibrariesPath/zlib -DZLIB_LIBRARY=/usr/local/macos/lib/libz.a -DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=10.12 -DCMAKE_CXX_FLAGS="-stdlib=libc++" ..
+cmake -DTON_USE_ROCKSDB=OFF -DTON_USE_ABSEIL=OFF -DTON_ARCH= -DTON_ONLY_TONLIB=ON -DOPENSSL_FOUND=1 -DOPENSSL_INCLUDE_DIR=$LibrariesPath/openssl_1_1_1/include -DOPENSSL_CRYPTO_LIBRARY=$LibrariesPath/openssl_1_1_1/libcrypto.a -DZLIB_FOUND=1 -DZLIB_INCLUDE_DIR=$LibrariesPath/zlib -DZLIB_LIBRARY=/usr/local/macos/lib/libz.a -DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=11.7 -DCMAKE_CXX_FLAGS="-stdlib=libc++" ..
 make $MAKE_THREADS_CNT tonlib
 cd ..
 mkdir build
 cd build
-cmake -DTON_USE_ROCKSDB=OFF -DTON_USE_ABSEIL=OFF -DTON_ARCH= -DTON_ONLY_TONLIB=ON -DOPENSSL_FOUND=1 -DOPENSSL_INCLUDE_DIR=$LibrariesPath/openssl_1_1_1/include -DOPENSSL_CRYPTO_LIBRARY=$LibrariesPath/openssl_1_1_1/libcrypto.a -DZLIB_FOUND=1 -DZLIB_INCLUDE_DIR=$LibrariesPath/zlib -DZLIB_LIBRARY=/usr/local/macos/lib/libz.a -DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=10.12 -DCMAKE_CXX_FLAGS="-stdlib=libc++" -DCMAKE_BUILD_TYPE=Release ..
+cmake -DTON_USE_ROCKSDB=OFF -DTON_USE_ABSEIL=OFF -DTON_ARCH= -DTON_ONLY_TONLIB=ON -DOPENSSL_FOUND=1 -DOPENSSL_INCLUDE_DIR=$LibrariesPath/openssl_1_1_1/include -DOPENSSL_CRYPTO_LIBRARY=$LibrariesPath/openssl_1_1_1/libcrypto.a -DZLIB_FOUND=1 -DZLIB_INCLUDE_DIR=$LibrariesPath/zlib -DZLIB_LIBRARY=/usr/local/macos/lib/libz.a -DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=11.7 -DCMAKE_CXX_FLAGS="-stdlib=libc++" -DCMAKE_BUILD_TYPE=Release ..
 make $MAKE_THREADS_CNT tonlib
 
 cd $rootPath/wallet-desktop/Wallet/
