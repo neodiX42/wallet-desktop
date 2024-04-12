@@ -1,7 +1,7 @@
 #!/bin/bash
 
 MAKE_THREADS_CNT=-j8
-MACOSX_DEPLOYMENT_TARGET=10.12
+MACOSX_DEPLOYMENT_TARGET=11.7
 
 ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 brew install automake cmake fdk-aac git lame libass libtool libvorbis libvpx ninja opus sdl shtool texi2html theora wget x264 xvid yasm pkg-config
@@ -51,14 +51,14 @@ cd ..
 git clone --branch 0.10.0 https://github.com/ericniebler/range-v3
 
 cd xz-5.0.5
-CFLAGS="-mmacosx-version-min=10.12" LDFLAGS="-mmacosx-version-min=10.12" ./configure --prefix=/usr/local/macos
+CFLAGS="-mmacosx-version-min=11.7" LDFLAGS="-mmacosx-version-min=11.7" ./configure --prefix=/usr/local/macos
 make $MAKE_THREADS_CNT
 sudo make install
 cd ..
 
 git clone https://github.com/desktop-app/zlib.git
 cd zlib
-CFLAGS="-mmacosx-version-min=10.12 -Werror=unguarded-availability-new" LDFLAGS="-mmacosx-version-min=10.12" ./configure --prefix=/usr/local/macos
+CFLAGS="-mmacosx-version-min=11.7 -Werror=unguarded-availability-new" LDFLAGS="-mmacosx-version-min=11.7" ./configure --prefix=/usr/local/macos
 make $MAKE_THREADS_CNT
 sudo make install
 cd ..
