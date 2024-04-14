@@ -101,7 +101,13 @@ git submodule update qtbase
 git submodule update qtimageformats
 cd qtbase
 git apply ../../patches/qtbase_5_12_8.diff
+cat src/plugins/platforms/cocoa/qiosurfacegraphicsbuffer.h
+sed -i '42 i include <CoreGraphics/CGColorSpace.h>' src/plugins/platforms/cocoa/qiosurfacegraphicsbuffer.h
+cat src/plugins/platforms/cocoa/qiosurfacegraphicsbuffer.h
+
 cd ..
+
+
 
 ./configure -prefix "/usr/local/desktop-app/Qt-5.12.8" \
 -debug-and-release \
