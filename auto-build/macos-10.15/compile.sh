@@ -6,21 +6,15 @@ MACOSX_DEPLOYMENT_TARGET=11.7
 ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 brew install automake cmake fdk-aac git lame libass libtool libvorbis libvpx ninja opus sdl shtool texi2html theora wget x264 xvid yasm pkg-config python-setuptools
 
+sudo mkdir -p /usr/local/bin
+sudo ln -s /usr/bin/python3 /usr/local/bin/python
+export PATH=/usr/loca/bin:$PATH
+
 sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
 
 rootPath=`pwd`
 
-if [ ! -d 'wallet-desktop' ]; then
-  mkdir wallet-desktop
-  cd wallet-desktop || exit
-  cp -R ../../../Wallet .
-  cp -R ../../../cmake .
-  cp -R ../../../CMakeLists.txt .
-  cd .. # wallet-desktop
-  grn "wallet-desktop completed"
-else
-  blu "wallet-desktop already present"
-fi
+git clone --recursive https://github.com/ton-blockchain/wallet-desktop.git
 
 cd wallet-desktop/Wallet/ThirdParty/rlottie
 git fetch
