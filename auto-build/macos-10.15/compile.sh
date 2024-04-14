@@ -102,7 +102,7 @@ git submodule update qtimageformats
 cd qtbase
 git apply ../../patches/qtbase_5_12_8.diff
 cat src/plugins/platforms/cocoa/qiosurfacegraphicsbuffer.h
-sed -i 's@qcore_mac_p.h>@qcore_mac_p.h>\ninclude <CoreGraphics/CGColorSpace.h>\n@g' src/plugins/platforms/cocoa/qiosurfacegraphicsbuffer.h
+sed -i -e 's@qcore_mac_p.h>@qcore_mac_p.h>\ninclude <CoreGraphics/CGColorSpace.h>\n@g' src/plugins/platforms/cocoa/qiosurfacegraphicsbuffer.h
 cat src/plugins/platforms/cocoa/qiosurfacegraphicsbuffer.h
 
 cd ..
