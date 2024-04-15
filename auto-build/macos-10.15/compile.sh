@@ -11,8 +11,11 @@ which python
 which python3
 
 sudo mkdir -p /usr/local/bin
-sudo ln -s /usr/bin/python3 /usr/local/bin/python
+#sudo ln -s /usr/bin/python3 /usr/local/bin/python
 export PATH=/usr/local/bin:$PATH
+echo "alias python=python3" >> ~/.zshrc
+source ~/.zshrc
+python -V
 
 echo $PATH
 
