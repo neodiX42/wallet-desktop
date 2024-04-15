@@ -3,7 +3,7 @@
 MAKE_THREADS_CNT=-j8
 MACOSX_DEPLOYMENT_TARGET=11.7
 
-ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+echo | /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 brew install automake cmake fdk-aac git lame libass libtool libvorbis libvpx ninja opus sdl shtool texi2html theora wget x264 xvid yasm pkg-config python-setuptools
 
 
