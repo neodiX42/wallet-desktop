@@ -6,9 +6,16 @@ MACOSX_DEPLOYMENT_TARGET=11.7
 ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 brew install automake cmake fdk-aac git lame libass libtool libvorbis libvpx ninja opus sdl shtool texi2html theora wget x264 xvid yasm pkg-config python-setuptools
 
+
+which python
+which python3
+
 sudo mkdir -p /usr/local/bin
 sudo ln -s /usr/bin/python3 /usr/local/bin/python
-export PATH=/usr/loca/bin:$PATH
+export PATH=/usr/local/bin:$PATH
+
+echo $PATH
+
 
 sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
 
