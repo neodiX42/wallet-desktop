@@ -10,11 +10,18 @@ brew install automake cmake fdk-aac git lame libass libtool libvorbis libvpx nin
 which python
 which python3
 
-sudo mkdir -p /usr/local/bin
-#sudo ln -s /usr/bin/python3 /usr/local/bin/python
-export PATH=/usr/local/bin:$PATH
-echo "alias python=python3" >> ~/.zshrc
-source ~/.zshrc
+#sudo mkdir -p /usr/local/bin
+#export PATH=/usr/local/bin:$PATH
+#echo "alias python=python3" >> ~/.zshrc
+#source ~/.zshrc
+
+brew install pyenv
+pyenv install 2.7.18
+pyenv global 2.7.18
+PATH=$(pyenv root)/shims:$PATH
+
+which python
+which python3
 python -V
 
 echo $PATH
@@ -46,7 +53,7 @@ export PATH="$PWD/depot_tools:$PATH"
 cd gyp
 git checkout 9f2a7bb1
 git apply ../patches/gyp.diff
-sed -i -e 's/python/python3/g' setup.py
+#sed -i -e 's/python/python3/g' setup.py
 ./setup.py build
 sudo ./setup.py install
 cd ../..
