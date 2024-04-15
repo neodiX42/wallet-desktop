@@ -3,7 +3,7 @@
 MAKE_THREADS_CNT=-j8
 MACOSX_DEPLOYMENT_TARGET=11.7
 
-echo | /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+# echo | /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 brew install automake cmake fdk-aac git lame libass libtool libvorbis libvpx ninja opus sdl shtool texi2html theora wget x264 xvid yasm pkg-config python-setuptools
 
 
@@ -16,7 +16,7 @@ which python3
 #source ~/.zshrc
 
 brew install pyenv
-pyenv install 2.7.18
+echo | pyenv install 2.7.18
 pyenv global 2.7.18
 PATH=$(pyenv root)/shims:$PATH
 
@@ -55,6 +55,7 @@ git checkout 9f2a7bb1
 git apply ../patches/gyp.diff
 #sed -i -e 's/python/python3/g' setup.py
 ./setup.py build
+test $? -eq 0 || { echo "Can't setup gyp"; exit 1; }
 sudo ./setup.py install
 cd ../..
 
@@ -75,6 +76,7 @@ git clone --branch 0.10.0 https://github.com/ericniebler/range-v3
 cd xz-5.0.5
 CFLAGS="-mmacosx-version-min=11.7" LDFLAGS="-mmacosx-version-min=11.7" ./configure --prefix=/usr/local/macos
 make $MAKE_THREADS_CNT
+test $? -eq 0 || { echo "Can't compile xz-5.0.5"; exit 1; }
 sudo make install
 cd ..
 
@@ -82,14 +84,17 @@ git clone https://github.com/desktop-app/zlib.git
 cd zlib
 CFLAGS="-mmacosx-version-min=11.7 -Werror=unguarded-availability-new" LDFLAGS="-mmacosx-version-min=11.7" ./configure --prefix=/usr/local/macos
 make $MAKE_THREADS_CNT
+test $? -eq 0 || { echo "Can't compile zlib"; exit 1; }
 sudo make install
 cd ..
 
 git clone https://github.com/openssl/openssl openssl_1_1_1
 cd openssl_1_1_1
 git checkout OpenSSL_1_1_1-stable
-./Configure --prefix=/usr/local/macos darwin64-x86_64-cc -static -mmacosx-version-min=11.7
+./Configure --prefix=/usr/local/macos darwin64-$(arch)-cc -static -mmacosx-version-min=11.7
+test $? -eq 0 || { echo "Can't configure openssl_1_1_1"; exit 1; }
 make build_libs $MAKE_THREADS_CNT
+test $? -eq 0 || { echo "Can't compile openssl_1_1_1"; exit 1; }
 cd ..
 
 
@@ -102,6 +107,7 @@ git clone https://chromium.googlesource.com/chromium/mini_chromium
 cd mini_chromium
 git checkout 7c5b0c1ab4
 git apply ../../../../patches/mini_chromium.diff
+test $? -eq 0 || { echo "Can't apply mini_chromium.diff"; exit 1; }
 cd ../../gtest
 git clone https://chromium.googlesource.com/external/github.com/google/googletest gtest
 cd gtest
@@ -109,10 +115,15 @@ git checkout d62d6c6556
 cd ../../..
 
 git apply $rootPath/wallet-desktop/auto-build/macos-10.15/crashpad.patch
+test $? -eq 0 || { echo "Can't apply crashpad.patch"; exit 1; }
 
 build/gyp_crashpad.py -Dmac_deployment_target=11.7
+test $? -eq 0 || { echo "Can't prepare gyp_crashpad"; exit 1; }
 ninja -C out/Debug
+test $? -eq 0 || { echo "Can't configure debug gyp_crashpad"; exit 1; }
 ninja -C out/Release
+test $? -eq 0 || { echo "Can't configure release gyp_crashpad"; exit 1; }
+
 cd ..
 
 git clone git://code.qt.io/qt/qt5.git qt5_12_8
@@ -145,6 +156,7 @@ cd ..
 -platform macx-clang
 
 make $MAKE_THREADS_CNT
+test $? -eq 0 || { echo "Can't compile qt5_12_8"; exit 1; }
 sudo make install
 cd ..
 
@@ -157,18 +169,23 @@ git submodule update third-party/crc32c
 mkdir build-debug
 cd build-debug
 cmake -DTON_USE_ROCKSDB=OFF -DTON_USE_ABSEIL=OFF -DTON_ARCH= -DTON_ONLY_TONLIB=ON -DOPENSSL_FOUND=1 -DOPENSSL_INCLUDE_DIR=$LibrariesPath/openssl_1_1_1/include -DOPENSSL_CRYPTO_LIBRARY=$LibrariesPath/openssl_1_1_1/libcrypto.a -DZLIB_FOUND=1 -DZLIB_INCLUDE_DIR=$LibrariesPath/zlib -DZLIB_LIBRARY=/usr/local/macos/lib/libz.a -DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=11.7 -DCMAKE_CXX_FLAGS="-stdlib=libc++" ..
+test $? -eq 0 || { echo "Can't configure debug ton"; exit 1; }
 make $MAKE_THREADS_CNT tonlib
+test $? -eq 0 || { echo "Can't compile debug ton"; exit 1; }
 cd ..
 mkdir build
 cd build
 cmake -DTON_USE_ROCKSDB=OFF -DTON_USE_ABSEIL=OFF -DTON_ARCH= -DTON_ONLY_TONLIB=ON -DOPENSSL_FOUND=1 -DOPENSSL_INCLUDE_DIR=$LibrariesPath/openssl_1_1_1/include -DOPENSSL_CRYPTO_LIBRARY=$LibrariesPath/openssl_1_1_1/libcrypto.a -DZLIB_FOUND=1 -DZLIB_INCLUDE_DIR=$LibrariesPath/zlib -DZLIB_LIBRARY=/usr/local/macos/lib/libz.a -DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=11.7 -DCMAKE_CXX_FLAGS="-stdlib=libc++" -DCMAKE_BUILD_TYPE=Release ..
+test $? -eq 0 || { echo "Can't configure release ton"; exit 1; }
 make $MAKE_THREADS_CNT tonlib
+test $? -eq 0 || { echo "Can't compile release ton"; exit 1; }
 
 cd $rootPath/wallet-desktop/Wallet/
 ./configure.sh -D DESKTOP_APP_USE_PACKAGED=OFF
+test $? -eq 0 || { echo "Can't configure wallet"; exit 1; }
 
 git apply $rootPath/wallet-desktop/auto-build/macos-10.15/wallet.patch
-
+test $? -eq 0 || { echo "Can't apply wallet.patch"; exit 1; }
 cd ../out
 
 xcodebuild -list -project Wallet.xcodeproj
