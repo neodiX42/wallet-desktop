@@ -91,7 +91,7 @@ cd ..
 git clone https://github.com/openssl/openssl openssl_1_1_1
 cd openssl_1_1_1
 git checkout OpenSSL_1_1_1-stable
-./Configure --prefix=/usr/local/macos darwin64-x86-64-cc -static -mmacosx-version-min=10.11
+./Configure --prefix=/usr/local/macos darwin64-x86_64-cc -static -mmacosx-version-min=10.11
 test $? -eq 0 || { echo "Can't configure openssl_1_1_1"; exit 1; }
 make build_libs $MAKE_THREADS_CNT
 test $? -eq 0 || { echo "Can't compile openssl_1_1_1"; exit 1; }
