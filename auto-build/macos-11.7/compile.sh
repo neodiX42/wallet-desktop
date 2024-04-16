@@ -114,7 +114,7 @@ cd gtest
 git checkout d62d6c6556
 cd ../../..
 
-git apply $rootPath/wallet-desktop/auto-build/macos-10.15/crashpad.patch
+git apply $rootPath/wallet-desktop/auto-build/macos-11.7/crashpad.patch
 test $? -eq 0 || { echo "Can't apply crashpad.patch"; exit 1; }
 
 build/gyp_crashpad.py -Dmac_deployment_target=10.8
@@ -186,7 +186,7 @@ cd $rootPath/wallet-desktop/Wallet/
 ./configure.sh -D DESKTOP_APP_USE_PACKAGED=OFF
 test $? -eq 0 || { echo "Can't configure wallet"; exit 1; }
 
-git apply $rootPath/wallet-desktop/auto-build/macos-10.15/wallet.patch
+git apply $rootPath/wallet-desktop/auto-build/macos-11.7/wallet.patch
 test $? -eq 0 || { echo "Can't apply wallet.patch"; exit 1; }
 cd ../out
 

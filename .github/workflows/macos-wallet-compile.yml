@@ -10,14 +10,14 @@ jobs:
           path: wallet-desktop
       - name: Compile macos desktop wallet
         run: |
-          cd wallet-desktop/auto-build/macos-10.15
+          cd wallet-desktop/auto-build/macos-11.7
           chmod +x compile.sh
           ./compile.sh
       - name: Find & copy binaries
         run: |
           mkdir artifacts
-          chmod -R 777 wallet-desktop/auto-build/macos-10.15/wallet-desktop/out/Release/Wallet.app
-          cp -R wallet-desktop/auto-build/macos-10.15/wallet-desktop/out/Release/Wallet.app artifacts
+          chmod -R 777 wallet-desktop/auto-build/macos-11.7/wallet-desktop/out/Release/Wallet.app
+          cp -R wallet-desktop/auto-build/macos-11.7/wallet-desktop/out/Release/Wallet.app artifacts
       - name: Upload artifacts
         uses: actions/upload-artifact@master
         with:
