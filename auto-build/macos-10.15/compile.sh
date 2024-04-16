@@ -119,8 +119,10 @@ test $? -eq 0 || { echo "Can't apply crashpad.patch"; exit 1; }
 
 build/gyp_crashpad.py -Dmac_deployment_target=10.8
 test $? -eq 0 || { echo "Can't prepare gyp_crashpad"; exit 1; }
+find out/Debug -type f -name "*.ninja" -print0 | xargs -0 sed -i '' -e 's/-Werror//g'
 ninja -C out/Debug
 test $? -eq 0 || { echo "Can't configure debug gyp_crashpad"; exit 1; }
+find out/Release -type f -name "*.ninja" -print0 | xargs -0 sed -i '' -e 's/-Werror//g'
 ninja -C out/Release
 test $? -eq 0 || { echo "Can't configure release gyp_crashpad"; exit 1; }
 
