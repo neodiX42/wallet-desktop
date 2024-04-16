@@ -100,45 +100,31 @@ cd ..
 
 git clone https://chromium.googlesource.com/crashpad/crashpad.git
 cd crashpad
-fetch crashpad
-cd crashpad
-git pull -r
-gclient sync
-gn gen out/Default
+git checkout feb3aa3923
+git apply ../patches/crashpad.diff
+cd third_party/mini_chromium
+git clone https://chromium.googlesource.com/chromium/mini_chromium
+cd mini_chromium
+git checkout 7c5b0c1ab4
+git apply ../../../../patches/mini_chromium.diff
+test $? -eq 0 || { echo "Can't apply mini_chromium.diff"; exit 1; }
+cd ../../gtest
+git clone https://chromium.googlesource.com/external/github.com/google/googletest gtest
+cd gtest
+git checkout d62d6c6556
+cd ../../..
 
-ninja -C out/Default
-ninja -C out/Default
-ninja -C out/Default
-ninja -C out/Default
-ninja -C out/Default
-ninja -C out/Default
-cd ../..
+git apply $rootPath/wallet-desktop/auto-build/macos-10.15/crashpad.patch
+test $? -eq 0 || { echo "Can't apply crashpad.patch"; exit 1; }
 
-#git checkout feb3aa3923
-#git apply ../patches/crashpad.diff
-#cd third_party/mini_chromium
-#git clone https://chromium.googlesource.com/chromium/mini_chromium
-#cd mini_chromium
-#git checkout 7c5b0c1ab4
-#git apply ../../../../patches/mini_chromium.diff
-#test $? -eq 0 || { echo "Can't apply mini_chromium.diff"; exit 1; }
-#cd ../../gtest
-#git clone https://chromium.googlesource.com/external/github.com/google/googletest gtest
-#cd gtest
-#git checkout d62d6c6556
-#cd ../../..
-#
-#git apply $rootPath/wallet-desktop/auto-build/macos-10.15/crashpad.patch
-#test $? -eq 0 || { echo "Can't apply crashpad.patch"; exit 1; }
-#
-#build/gyp_crashpad.py -Dmac_deployment_target=10.11
-#test $? -eq 0 || { echo "Can't prepare gyp_crashpad"; exit 1; }
-#ninja -C out/Debug
-#test $? -eq 0 || { echo "Can't configure debug gyp_crashpad"; exit 1; }
-#ninja -C out/Release
-#test $? -eq 0 || { echo "Can't configure release gyp_crashpad"; exit 1; }
-#
-#cd ..
+build/gyp_crashpad.py -Dmac_deployment_target=10.11
+test $? -eq 0 || { echo "Can't prepare gyp_crashpad"; exit 1; }
+ninja -C out/Debug
+test $? -eq 0 || { echo "Can't configure debug gyp_crashpad"; exit 1; }
+ninja -C out/Release
+test $? -eq 0 || { echo "Can't configure release gyp_crashpad"; exit 1; }
+
+cd ..
 
 git clone git://code.qt.io/qt/qt5.git qt5_12_8
 cd qt5_12_8
